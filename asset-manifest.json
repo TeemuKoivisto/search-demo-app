@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.js": "/search-demo-app/static/js/main.a4be0a10.chunk.js",
-    "main.js.map": "/search-demo-app/static/js/main.a4be0a10.chunk.js.map",
+    "main.js": "/search-demo-app/static/js/main.230fff9f.chunk.js",
+    "main.js.map": "/search-demo-app/static/js/main.230fff9f.chunk.js.map",
     "runtime~main.js": "/search-demo-app/static/js/runtime~main.7f7b626b.js",
     "runtime~main.js.map": "/search-demo-app/static/js/runtime~main.7f7b626b.js.map",
     "static/js/2.f6f08eda.chunk.js": "/search-demo-app/static/js/2.f6f08eda.chunk.js",
     "static/js/2.f6f08eda.chunk.js.map": "/search-demo-app/static/js/2.f6f08eda.chunk.js.map",
     "index.html": "/search-demo-app/index.html",
-    "precache-manifest.3bd4a1b26a4d08c33e7ef6ce16e4dfdb.js": "/search-demo-app/precache-manifest.3bd4a1b26a4d08c33e7ef6ce16e4dfdb.js",
+    "precache-manifest.9c90da62d3bf3d3adae59b39dc355ef4.js": "/search-demo-app/precache-manifest.9c90da62d3bf3d3adae59b39dc355ef4.js",
     "service-worker.js": "/search-demo-app/service-worker.js"
   }
 }
