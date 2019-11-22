@@ -3,6 +3,7 @@ import styled from 'styled-components'
 // import PropTypes from 'prop-types'
 import { FiSearch } from 'react-icons/fi'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import debounce from 'lodash/debounce'
 
 import Fuse from 'fuse.js'
 
@@ -49,6 +50,7 @@ const SearchInputEl = memo((props: IProps) => {
   // https://fusejs.io/
   // fuse.js is a fuzzy-search library which is helpful when user makes typos etc
   const fuse = new Fuse(searchItems || [], searchOptions || {})
+  const debouncedSearch = debounce(handleSearch, 250)
 
   function hideResults() {
     setResultsVisible(false)
@@ -60,8 +62,11 @@ const SearchInputEl = memo((props: IProps) => {
     }
   }
   function handleChange(newVal: string) {
-    const deletedText = newVal.length < value.length
     onChange(newVal)
+    debouncedSearch(newVal)
+  }
+  function handleSearch(newVal: string) {
+    const deletedText = newVal.length < value.length
     // Reset the shownResults amount to the default
     // Dunno if this is the perfect flow but it seems all right
     if (deletedText) {
