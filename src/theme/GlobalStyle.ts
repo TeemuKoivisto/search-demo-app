@@ -22,10 +22,6 @@ export const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
   }
-  a, a:visited {
-    color: inherit;
-    text-decoration: none;
-  }
   html.scroll-lock {
     overflow: hidden;
   }

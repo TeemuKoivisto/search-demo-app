@@ -5,6 +5,8 @@ import { FiSearch } from 'react-icons/fi'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import debounce from 'lodash/debounce'
 
+import Fuse from 'fuse.js'
+
 import {Input} from '../elements/Input'
 
 import useClickOutside from '../hooks/useClickOutside'
@@ -22,7 +24,7 @@ interface IProps {
   color?: string
   dataAttrBase?: string
   searchItems: any[]
-  // searchOptions: any
+  searchOptions: any
   selected?: boolean
   rounded?: boolean
   searchIcon?: ReactNode
@@ -30,15 +32,14 @@ interface IProps {
   renderSearchResult: (result: ISearchTopic) => ReactNode
   shownSearchResults: number
   onChange: (val: string) => void
-  onSubmit: (item: ISearchTopic) => string
-  onSearch: (val: string, oldVal: string) => ISearchTopic[]
+  onSubmit: (form: any) => void
 }
 
 const SearchInputEl = memo((props: IProps) => {
   const {
     className, id, value, placeholder, disabled, required, hasError,
-    color, dataAttrBase, searchItems, selected, rounded, searchIcon,
-    resultIsLink, renderSearchResult, shownSearchResults, onChange, onSubmit, onSearch
+    color, dataAttrBase, searchItems, searchOptions, selected, rounded, searchIcon,
+    resultIsLink, renderSearchResult, shownSearchResults, onChange, onSubmit
   } = props
   const [searchResults, setSearchResults] = useState([] as ISearchTopic[])
   const [shownResults, setShownResults] = useState(shownSearchResults)
@@ -48,6 +49,7 @@ const SearchInputEl = memo((props: IProps) => {
   useClickOutside(ref, () => hideResults(), resultsVisible)
   // https://fusejs.io/
   // fuse.js is a fuzzy-search library which is helpful when user makes typos etc
+  const fuse = new Fuse(searchItems || [], searchOptions || {})
   const debouncedSearch = debounce(handleSearch, 250)
 
   function hideResults() {
@@ -73,7 +75,7 @@ const SearchInputEl = memo((props: IProps) => {
     // If searchItems were provided and there exists results
     if (searchItems && searchItems.length > 0) {
       console.time('search')
-      const newResults = onSearch(newVal, value)
+      const newResults = fuse.search(newVal) as ISearchTopic[]
       console.log(newResults)
       console.timeEnd('search')
       setSearchResults(newResults)
@@ -92,12 +94,11 @@ const SearchInputEl = memo((props: IProps) => {
       setHasMoreResults(false)
     }
   }
-  function handleResultItemClick(item: ISearchTopic) {
+  function handleResultItemClick(item: any) {
     // Prevents onClick from transitioning if result was link that was opened to eg new tab
     if (!resultIsLink) {
-      const newVal = onSubmit(item)
+      onSubmit(item)
       hideResults()
-      handleSearch(newVal)
     }
   }
   function handleSearchIconClick() {

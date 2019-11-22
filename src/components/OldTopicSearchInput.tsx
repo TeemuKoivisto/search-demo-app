@@ -3,9 +3,8 @@ import styled from '../theme/styled'
 import { inject } from 'mobx-react'
 
 // import PropTypes from 'prop-types'
-import Fuse from 'fuse.js'
 
-import SearchInput from './SearchInput'
+import OldSearchInput from './OldSearchInput'
 
 import { ITopic, ISearchTopic } from '../types/topic'
 import { TopicStore } from '../stores/TopicStore'
@@ -25,43 +24,6 @@ function createSearchItemsList(topics: ITopic[]) {
   }, [] as ISearchTopic[])
 }
 
-function findTopicsByBreadcrumb(topics: ISearchTopic[], crumb: string[]) {
-  const t = topics.reduce((acc: ISearchTopic[], cur: ISearchTopic) => {
-    if (isEqualBreadcrumb(cur.breadcrumb, crumb, cur.breadcrumb.length - 1)) {
-      acc.push({
-        key: cur.key,
-        text: cur.text,
-        breadcrumb: cur.breadcrumb,
-        value: cur.value
-      })
-    }
-    return acc
-  }, [] as ISearchTopic[])
-  return sortSearchResultsByCrumb(t)
-}
-
-function isEqualBreadcrumb(crumb1: string[], crumb2: string[], fromStart: number) {
-  const to = fromStart
-  if (!fromStart && crumb1.length !== crumb2.length) {
-    return false
-  }
-  let equal = true
-  for(let i = 0; i < to; i++) {
-    if (crumb1[i] !== crumb2[i]) equal = false
-  }
-  return equal
-}
-
-function sortSearchResultsByCrumb(topics: ISearchTopic[]) {
-  return topics.sort((a, b) => {
-    if (a.breadcrumb.length === b.breadcrumb.length) {
-      // fuzzy search the text? or not, it's good enough
-      return 0
-    }
-    return b.breadcrumb.length - a.breadcrumb.length
-  })
-}
-
 interface IProps {
   className?: string
   id?: string
@@ -75,7 +37,7 @@ interface IProps {
   rounded?: boolean
   topicStore?: TopicStore
   onChange: (val: string) => void
-  onSubmit: (item: ISearchTopic) => string
+  onSubmit: (form: any) => void
 }
 
 const TopicSearchInput = inject('topicStore')(memo((props: IProps) => {
@@ -83,27 +45,15 @@ const TopicSearchInput = inject('topicStore')(memo((props: IProps) => {
     className, id, value, placeholder, disabled, required, selected,
     hasError, onChange, onSubmit, topicStore
   } = props
-
   const searchItems = createSearchItemsList(topicStore!.topics)
-  const fuse = new Fuse(searchItems, {
-    threshold: 0.2, keys: ['text'], tokenize: true, maxPatternLength: 100
-  })
-
   const handleSearchItemClick = (result: ISearchTopic) => (e: any) => {
     onChange(result.text)
-  }
-  function handleSearch(newVal: string, prevVal: string) {
-    const crumbs = newVal.split('/').slice(0, -1)
-    if (crumbs.length === 0) {
-      return fuse.search(newVal) as ISearchTopic[]
-    }
-    return findTopicsByBreadcrumb(searchItems, crumbs)
   }
   function renderSearchResult(result: ISearchTopic) {
     return <SearchResult onClick={handleSearchItemClick(result)}>{result.text}</SearchResult>
   }
   return (
-    <SearchInput
+    <OldSearchInput
       className={className}
       id={id}
       value={value}
@@ -112,13 +62,13 @@ const TopicSearchInput = inject('topicStore')(memo((props: IProps) => {
       required={required}
       hasError={hasError}
       onChange={onChange}
-      onSearch={handleSearch}
       onSubmit={onSubmit}
       resultIsLink={false}
       rounded={false}
       searchIcon={false}
       selected={selected}
       searchItems={searchItems}
+      searchOptions={{threshold: 0.2, keys: ['text', 'breadcrumb'], tokenize: true, maxPatternLength: 100 }}
       renderSearchResult={renderSearchResult}
       shownSearchResults={20}
     />
