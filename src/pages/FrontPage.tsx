@@ -51,8 +51,11 @@ const SearchForm = memo((props: {}) => {
     setTopic(val.text)
     setTopicId(val.value)
   }
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+  }
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <TopicSearchInput
         id="thread-topic"
         placeholder="Kirjoita aihealue"

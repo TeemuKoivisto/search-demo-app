@@ -2,6 +2,7 @@
   "name": "my-react-bootstrap",
   "version": "0.1.0",
   "author": "Teemu Koivisto",
+  "homepage": "https://teemukoivisto.github.io/search-demo-app/",
   "dependencies": {
     "axios": "^0.19.0",
     "fuse.js": "^3.4.5",
@@ -18,6 +19,8 @@
     "styled-components": "^4.3.2"
   },
   "scripts": {
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -34,6 +37,7 @@
     "@types/react-router-dom": "^4.3.4",
     "@types/styled-components": "4.1.18",
     "enzyme": "^3.10.0",
+    "gh-pages": "^2.1.1",
     "react-scripts": "3.0.1",
     "tslint-config-airbnb": "^5.11.1",
     "typescript": "3.5.3"
