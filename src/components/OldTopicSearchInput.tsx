@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import styled from '../theme/styled'
 import { inject } from 'mobx-react'
 
@@ -45,7 +45,13 @@ const TopicSearchInput = inject('topicStore')(memo((props: IProps) => {
     className, id, value, placeholder, disabled, required, selected,
     hasError, onChange, onSubmit, topicStore
   } = props
-  const searchItems = createSearchItemsList(topicStore!.topics)
+  const [searchItems, setSearchItems] = useState([] as ISearchTopic[])
+
+  useEffect(() => {
+    const newItems = createSearchItemsList(topicStore!.topics)
+    setSearchItems(newItems)
+  }, [topicStore!.topics])
+
   const handleSearchItemClick = (result: ISearchTopic) => (e: any) => {
     onChange(result.text)
   }

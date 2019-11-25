@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import styled from '../theme/styled'
 import { inject } from 'mobx-react'
 
@@ -42,7 +42,7 @@ function findTopicsByBreadcrumb(topics: ISearchTopic[], crumb: string[]) {
 
 function isEqualBreadcrumb(crumb1: string[], crumb2: string[], fromStart: number) {
   const to = fromStart
-  if (!fromStart && crumb1.length !== crumb2.length) {
+  if (fromStart === undefined && crumb1.length !== crumb2.length) {
     return false
   }
   let equal = true
@@ -84,10 +84,20 @@ const TopicSearchInput = inject('topicStore')(memo((props: IProps) => {
     hasError, onChange, onSubmit, topicStore
   } = props
 
-  const searchItems = createSearchItemsList(topicStore!.topics)
-  const fuse = new Fuse(searchItems, {
+  const [searchItems, setSearchItems] = useState([] as ISearchTopic[])
+  // https://fusejs.io/
+  // fuse.js is a fuzzy-search library which is helpful when user makes typos etc
+  const [fuse, setFuse] = useState(new Fuse(searchItems, {
     threshold: 0.2, keys: ['text'], tokenize: true, maxPatternLength: 100
-  })
+  }))
+
+  useEffect(() => {
+    const newItems = createSearchItemsList(topicStore!.topics)
+    setSearchItems(newItems)
+    setFuse(new Fuse(newItems, {
+      threshold: 0.2, keys: ['text'], tokenize: true, maxPatternLength: 100
+    }))
+  }, [topicStore!.topics])
 
   const handleSearchItemClick = (result: ISearchTopic) => (e: any) => {
     onChange(result.text)
@@ -120,7 +130,7 @@ const TopicSearchInput = inject('topicStore')(memo((props: IProps) => {
       selected={selected}
       searchItems={searchItems}
       renderSearchResult={renderSearchResult}
-      shownSearchResults={20}
+      shownSearchResults={200}
     />
   )
 }))

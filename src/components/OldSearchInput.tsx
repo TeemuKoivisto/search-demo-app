@@ -1,4 +1,4 @@
-import React, { memo, useRef, useState, ReactNode } from 'react'
+import React, { memo, useRef, useEffect, useState, ReactNode } from 'react'
 import styled from 'styled-components'
 // import PropTypes from 'prop-types'
 import { FiSearch } from 'react-icons/fi'
@@ -49,8 +49,12 @@ const SearchInputEl = memo((props: IProps) => {
   useClickOutside(ref, () => hideResults(), resultsVisible)
   // https://fusejs.io/
   // fuse.js is a fuzzy-search library which is helpful when user makes typos etc
-  const fuse = new Fuse(searchItems || [], searchOptions || {})
+  const [fuse, setFuse] = useState(new Fuse(searchItems, searchOptions))
   const debouncedSearch = debounce(handleSearch, 250)
+
+  useEffect(() => {
+    setFuse(new Fuse(searchItems, searchOptions))
+  }, [searchItems])
 
   function hideResults() {
     setResultsVisible(false)

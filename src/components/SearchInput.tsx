@@ -2,7 +2,7 @@ import React, { memo, useRef, useState, ReactNode } from 'react'
 import styled from 'styled-components'
 // import PropTypes from 'prop-types'
 import { FiSearch } from 'react-icons/fi'
-import InfiniteScroll from 'react-infinite-scroll-component'
+// import InfiniteScroll from 'react-infinite-scroll-component'
 import debounce from 'lodash/debounce'
 
 import {Input} from '../elements/Input'
@@ -86,11 +86,9 @@ const SearchInputEl = memo((props: IProps) => {
     }
   }
   function handleShowMoreResults() {
-    const newShownResults = shownResults + shownSearchResults
+    const newShownResults = shownResults + searchResults.length
     setShownResults(newShownResults)
-    if (newShownResults >= searchResults.length) {
-      setHasMoreResults(false)
-    }
+    setHasMoreResults(false)
   }
   function handleResultItemClick(item: ISearchTopic) {
     // Prevents onClick from transitioning if result was link that was opened to eg new tab
@@ -142,7 +140,7 @@ const SearchInputEl = memo((props: IProps) => {
         }
       </SearchWrapper>
       <ResultsList visible={resultsVisible}>
-        <InfiniteScroll
+        {/* <InfiniteScroll
           className="infinite-scroll"
           dataLength={shownResults}
           next={handleShowMoreResults}
@@ -152,13 +150,17 @@ const SearchInputEl = memo((props: IProps) => {
           endMessage={ searchResults.length !== 0 &&
             <ResultItem className="end-of-results">
             </ResultItem>}
-        >
-          { searchResults.slice(0, shownResults).map((r, i) =>
-          <ResultItem key={r.key} onClick={() => handleResultItemClick(r)}>
-            {renderSearchResult(r)}
-          </ResultItem>
-          )}
-        </InfiniteScroll>
+        > */}
+        { searchResults.slice(0, shownResults).map((r, i) =>
+        <ResultItem key={r.key} onClick={() => handleResultItemClick(r)}>
+          {renderSearchResult(r)}
+        </ResultItem>
+        )}
+        { hasMoreResults &&
+        <ResultItem onClick={handleShowMoreResults}>
+          <ShowMore>Näytä lisää</ShowMore>
+        </ResultItem>}
+        {/* </InfiniteScroll> */}
       </ResultsList>
     </div>
   )
@@ -214,28 +216,18 @@ const IconWrapper = styled.div`
 const SearchIcon = styled(FiSearch)`
   vertical-align: middle;
 `
-const SvgWrapper = styled.span`
-  align-items: center;
-  display: flex;
-`
+// const SvgWrapper = styled.span`
+//   align-items: center;
+//   display: flex;
+// `
 const ResultsList = styled.div<{ visible: boolean }>`
   display: ${({ visible }) => visible ? 'block' : 'none'};
-  height: 300px;
+  height: 170px;
+  overflow: scroll;
   position: absolute;
   visibility: ${({ visible }) => visible ? 'visible' : 'hidden'};
   width: 100%;
   z-index: 10;
-  .infinite-scroll {
-    margin: 0 15px 0 15px;
-    &::-webkit-scrollbar {
-      background: ${({ theme }) => theme.color.grayLight};
-      height: 8px;
-      width: 5px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: ${({ theme }) => theme.color.gray};
-    }
-  }
 `
 const ResultItem = styled.div`
   background: #fff;
@@ -249,16 +241,8 @@ const ResultItem = styled.div`
   &:hover {
     background: #f2f2f2;
   }
-  &.end-of-results {
-    height: 5px;
-    &:hover {
-      background: #fff;
-    }
-    & > ${SvgWrapper} {
-      margin-right: 15px;
-    }
-  }
 `
+const ShowMore = styled.div``
 const SearchInput = styled(SearchInputEl)`
   position: relative;
 `
